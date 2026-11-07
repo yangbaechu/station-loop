@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Station Loop · 온실의 마지막 불빛</title>
+  <link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script><script src="/auth.js" defer></script>
+</head>
+<body>
+  <div class="shell">
+    <header><a class="brand" href="/">◈ <span>STATION LOOP<small>ORBITAL HABITAT · SECTOR 07</small></span></a>
+      <div class="header-actions"><a href="/api/export" download>기록 내보내기 ↗</a><button id="reset" class="subtle">새 게임</button></div>
+    </header>
+    <section class="intro"><div><span class="eyebrow">MISSION 01 / LIFE SUPPORT</span><h1>온실의 마지막 불빛</h1>
+      <p>산소가 떨어지기 전에 승무원들과 생산기를 복구하세요.</p></div><div class="turn"><span id="status">연결 중</span><strong id="tick">00 <small>/ 12 TURNS</small></strong></div></section>
+    <div class="badges"><span id="engine"></span><span id="provider"></span><span id="mode-note"></span></div>
+    <div class="mode-controls"><button id="start-sample" class="subtle" disabled>▶ 샘플 플레이 관전하기</button><button id="return-play" class="subtle" hidden>직접 플레이로 돌아가기</button><span id="sample-note">처음이라면 정해진 8턴 시나리오를 다음 버튼으로 따라가 보세요. AI 호출 없이 볼 수 있습니다.</span></div>
+    <section class="panel sample-player" id="sample-player" hidden aria-label="샘플 시나리오 관전">
+      <div class="section-label"><h2>샘플 플레이 · 관전 모드</h2><span id="sample-chapter">PROLOGUE</span></div>
+      <h3 id="scene-title"></h3><p id="scene-detail" aria-live="polite"></p>
+      <div class="sample-controls"><button id="sample-next" class="primary" disabled>다음 장면 →</button><span>승무원의 행동은 정해져 있습니다. 버튼을 누를 때만 한 턴씩 진행됩니다.</span></div>
+    </section>
+    <section class="panel briefing" id="play-briefing" aria-label="임무와 플레이 방법">
+      <div class="section-label"><h2>당신은 정거장의 관제 담당자입니다</h2><span>HOW TO PLAY</span></div>
+      <p>고장 난 산소 생산기를 복구하고 <strong>3턴 연속 가동</strong>하면 승리합니다. 승무원에게 지시하거나 행동을 직접 선택한 뒤, 아래 관제실에서 <strong>다음 턴 진행</strong>을 누르세요.</p>
+      <ol class="mission-steps" id="mission-steps">
+        <li>창고에서 부품 줍기</li><li>엔지니어에게 전달</li><li>온실에서 수리</li><li>3턴 연속 가동</li>
+      </ol>
+      <div class="next-objective"><span>지금 할 일</span><strong id="hint-title">승무원과 정거장 상태를 확인하세요.</strong><p id="hint-detail"></p></div>
+      <div class="guide-actions"><a class="guide-link" href="#command-deck">관제실로 이동 ↓</a><button id="example-order" class="subtle" disabled>예시 지시 넣기</button><button id="first-turn" class="subtle" hidden>첫 턴 행동을 직접 설정</button></div>
+      <details class="play-rules"><summary>턴과 승무원 역할 알아보기</summary>
+        <ul><li><strong>실시간 제한은 없습니다.</strong> 버튼을 누를 때만 시간이 흐릅니다. 한 턴에는 각 승무원이 행동 하나씩 실행하고 산소가 3 줄어듭니다. 대기하거나 행동이 거절돼도 턴은 흐릅니다.</li>
+        <li><strong>엔지니어</strong>만 수리할 수 있습니다. 공구는 이미 갖고 있지만, 부품을 전달받아 온실로 가야 합니다.</li>
+        <li><strong>탐사 담당자</strong>에게 창고의 부품 운반을 맡기면 좋습니다. <strong>의무관</strong>도 이동·물품 운반을 도울 수 있습니다.</li>
+        <li><strong>이동·줍기·전달·수리는 각각 한 행동</strong>입니다. 물품 전달은 두 승무원이 같은 구역에 있을 때만 가능합니다. 창고와 온실 사이는 제어실을 거쳐 이동하세요.</li>
+        <li><strong>산소가 0 이하</strong>가 되거나 12턴 안에 안정화하지 못하면 실패합니다. 수리에는 전력 2와 부품 1개, 이후 산소 생산에는 턴당 전력 1이 필요합니다.</li>
+        <li><strong>AI 지시는 요청</strong>입니다. 실제로 실행됐는지는 행동 기록에서 확인하세요. 거절된 행동은 이유를 펼쳐 볼 수 있습니다.</li></ul>
+      </details>
+    </section>
+    <p id="error" role="alert" hidden></p>
+    <section id="chatgpt-settings" class="panel chatgpt-settings" hidden>
+      <div class="section-label"><h2>ChatGPT 계정 연결</h2><a id="manage-usage" href="https://chatgpt.com/#settings/Usage" target="_blank" rel="noopener noreferrer">Manage usage ↗</a></div>
+      <p id="auth-status">ChatGPT 구독으로 승무원들의 AI 요청을 실행할 수 있습니다.</p>
+      <div class="auth-controls">
+        <label>계정<select id="auth-account"><option value="">새 계정</option></select></label>
+        <button id="chatgpt-connect" class="chatgpt-button">Continue with ChatGPT</button>
+        <button id="chatgpt-add" class="subtle">다른 계정 추가</button>
+        <button id="chatgpt-logout" class="subtle" hidden>로그아웃</button>
+        <label>모델<select id="chatgpt-model" disabled><option value="">연결 후 선택</option></select></label>
+        <button id="chatgpt-retry" hidden>사용량 다시 확인</button>
+      </div>
+      <small>계정·모델을 선택하면 해당 설정으로 새 게임이 시작됩니다. API 키 모드로 자동 전환하지 않습니다.</small>
+    </section>
+    <dialog id="chatgpt-welcome"><h2>ChatGPT 구독을 사용합니다</h2><p>이 앱의 AI 요청은 연결한 ChatGPT 구독의 사용량 또는 사용 가능한 크레딧을 사용합니다.<br>ChatGPT 설정에서 사용량과 앱별 한도를 관리할 수 있습니다.</p><a href="https://chatgpt.com/#settings/Usage" target="_blank" rel="noopener noreferrer">Manage usage ↗</a><button id="chatgpt-welcome-ok" class="primary">확인</button></dialog>
+    <section class="metrics" aria-label="정거장 상태">
+      <article><span>O₂ / 산소 잔량</span><strong id="oxygen">24</strong><div class="meter"><progress id="oxygen-meter" max="24" value="24"></progress></div><small>승무원 호흡으로 턴당 3 소모</small></article>
+      <article><span>⚡ / 가용 전력</span><strong id="power">12</strong><div class="meter power"><progress id="power-meter" max="12" value="12"></progress></div><small>수리 2 · 생산기 가동 턴당 1</small></article>
+      <article><span>◎ / 생명 유지 장치</span><strong id="device">고장</strong><div class="streak" id="streak"></div><small>3턴 연속 산소 생산 시 임무 성공</small></article>
+    </section>
+    <main>
+      <section class="panel station"><div class="section-label"><h2>정거장</h2><span>LIVE TELEMETRY</span></div>
+        <div class="map" id="map"></div>
+        <div class="legend"><span>━ 열린 통로</span><span>┄ 온실 ↔ 창고 직통문 폐쇄</span></div>
+        <div class="mission"><span>목표</span><p>창고의 부품을 엔지니어에게 전달하고, 온실의 산소 생산기를 복구하세요.</p></div>
+        <div class="section-label crew-heading"><h2>승무원</h2><span>3 CREW MEMBERS</span></div>
+        <div id="crew"></div>
+      </section>
+      <section class="panel timeline"><div class="section-label"><h2>무전 & 행동 기록</h2><span id="event-count">0 EVENTS</span></div>
+        <div id="timeline" aria-live="polite"><div class="empty">아직 정거장은 조용합니다.<br>첫 턴을 진행해 승무원들의 행동을 확인하세요.</div></div>
+      </section>
+    </main>
+    <section class="panel command" id="command-deck"><div class="section-label"><h2>관제실</h2><span>COMMAND DECK</span></div>
+      <p class="command-help" id="command-help">대상을 고르고 이번 턴의 지시를 입력하세요. 직접 조작하려면 아래 행동 선택을 펼치세요.</p>
+      <div class="command-line"><label class="sr-only" for="target">지시 대상</label><select id="target"><option value="all">전체 승무원</option><option value="engineer">엔지니어</option><option value="medic">의무관</option><option value="scout">탐사 담당자</option></select>
+        <label class="sr-only" for="instruction">이번 턴 지시</label><input id="instruction" maxlength="1000" placeholder="이번 턴의 지시를 입력하세요 (LLM 모드에서 해석)">
+        <button id="advance" class="primary">다음 턴 진행 <span>→</span></button></div>
+      <details class="manual" id="manual-panel"><summary>승무원 행동을 직접 선택하기</summary><p>선택한 행동은 다음 턴에 한 번 실행됩니다. “승무원에게 맡기기”로 두면 현재 컨트롤러가 결정합니다. 예를 들어 “이동 · 창고”로 도착한 다음 턴에 “줍기 · 수리 부품”을 선택하세요.</p><div id="manual-controls"></div></details>
+    </section>
+    <footer><span>STATION LOOP · AGENT PLAYGROUND</span><span>제안은 대화로, 결과는 세계의 규칙으로.</span></footer>
+  </div>
+</body></html>

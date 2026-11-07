@@ -1,0 +1,48 @@
+.decl agent_at(agent: symbol, room: symbol)
+.decl open_edge(src: symbol, dst: symbol)
+.decl reachable(src: symbol, dst: symbol)
+.decl owns(agent: symbol, item: symbol)
+.decl item_kind(item: symbol, kind: symbol)
+.decl item_at(item: symbol, room: symbol)
+.decl device_at(device: symbol, room: symbol)
+.decl broken(device: symbol)
+.decl repairer(agent: symbol)
+.decl part_count(agent: symbol, amount: int64)
+.decl power(amount: int64)
+.decl repair_cost(amount: int64)
+.decl part_cost(amount: int64)
+.decl candidate(id: symbol, agent: symbol, kind: symbol, target: symbol, item: symbol, recipient: symbol)
+.decl has_tool(agent: symbol)
+.decl same_room(first: symbol, second: symbol)
+.decl at_device(agent: symbol, device: symbol)
+.decl can_move(id: symbol)
+.decl can_pickup(id: symbol)
+.decl blocked(id: symbol, reason: symbol)
+.decl has_blocker(id: symbol)
+.decl allowed(id: symbol)
+
+reachable(X,Y) :- open_edge(X,Y).
+reachable(X,Z) :- reachable(X,Y), open_edge(Y,Z).
+has_tool(A) :- owns(A,I), item_kind(I,"tool").
+same_room(A,B) :- agent_at(A,R), agent_at(B,R).
+at_device(A,D) :- agent_at(A,R), device_at(D,R).
+can_move(P) :- candidate(P,A,"move",T,I,B), agent_at(A,R), open_edge(R,T).
+can_pickup(P) :- candidate(P,A,"pickup",T,I,B), agent_at(A,R), item_at(I,R).
+
+blocked(P,"door_closed") :- candidate(P,A,"move",T,I,B), !can_move(P).
+blocked(P,"item_not_here") :- candidate(P,A,"pickup",T,I,B), !can_pickup(P).
+blocked(P,"not_owner") :- candidate(P,A,"give",T,I,B), !owns(A,I).
+blocked(P,"not_colocated") :- candidate(P,A,"give",T,I,B), !same_room(A,B).
+blocked(P,"same_recipient") :- candidate(P,A,"give",T,I,A).
+blocked(P,"wrong_role") :- candidate(P,A,"repair",D,I,B), !repairer(A).
+blocked(P,"not_colocated") :- candidate(P,A,"repair",D,I,B), !at_device(A,D).
+blocked(P,"missing_tool") :- candidate(P,A,"repair",D,I,B), !has_tool(A).
+blocked(P,"missing_part") :- candidate(P,A,"repair",D,I,B), part_count(A,N), part_cost(C), N < C.
+blocked(P,"insufficient_power") :- candidate(P,A,"repair",D,I,B), power(N), repair_cost(C), N < C.
+blocked(P,"already_online") :- candidate(P,A,"repair",D,I,B), !broken(D).
+has_blocker(P) :- blocked(P,R).
+allowed(P) :- candidate(P,A,K,T,I,B), !has_blocker(P).
+
+.output allowed
+.output blocked
+.output reachable

@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "id": "life_support_v1",
+  "title": "온실의 마지막 불빛",
+  "description": "창고의 부품을 전달해 온실의 산소 생산기를 복구한다.",
+  "max_ticks": 12,
+  "rooms": ["control", "greenhouse", "storage"],
+  "doors": [
+    {"rooms": ["control", "greenhouse"], "open": true},
+    {"rooms": ["control", "storage"], "open": true},
+    {"rooms": ["greenhouse", "storage"], "open": false}
+  ],
+  "agents": [
+    {"id": "engineer", "room": "control", "can_repair": true, "priority": "restore_systems"},
+    {"id": "medic", "room": "control", "can_repair": false, "priority": "preserve_survival_margin"},
+    {"id": "scout", "room": "control", "can_repair": false, "priority": "secure_supplies"}
+  ],
+  "items": [
+    {"id": "wrench_1", "kind": "tool", "owner": "engineer", "room": null},
+    {"id": "repair_part_1", "kind": "repair_part", "owner": null, "room": "storage"}
+  ],
+  "devices": [
+    {"id": "oxygen_generator", "room": "greenhouse", "status": "broken"}
+  ],
+  "resources": {"oxygen": 24, "oxygen_capacity": 24, "power": 12},
+  "rules": {
+    "oxygen_consumption_per_agent_per_tick": 1,
+    "repair_power_cost": 2,
+    "repair_part_cost": 1,
+    "production_power_cost_per_tick": 1,
+    "oxygen_production_per_tick": 4,
+    "success_production_streak": 3
+  },
+  "initiative_order": ["engineer", "medic", "scout"],
+  "initiative_rotation": "left_by_tick_minus_one",
+  "observation_mode": "public_world",
+  "allowed_actions": ["move", "pickup", "give", "repair", "say", "wait"]
+}

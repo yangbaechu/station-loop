@@ -1,0 +1,13 @@
+[project]
+name = "station-loop"
+version = "0.1.0"
+description = "A turn-based neuro-symbolic space-station agent playground"
+requires-python = ">=3.12"
+dependencies = []
+
+[project.optional-dependencies]
+wirelog = ["pyrewire==1.1.3"]
+chatgpt = ["PyJWT[crypto]>=2.10,<3"]
+
+[tool.uv]
+package = false
