@@ -2,6 +2,13 @@
 
 확인일: 2026-11-07. Python 3.12, PyreWire 1.1.3 / 번들 Wirelog 0.70.0.
 
+## 공개 결과물
+
+2026-11-07 [yangbaechu/station-loop](https://github.com/yangbaechu/station-loop)를 공개 저장소로 게시했다.
+GitHub API에서 공개 상태와 main 브랜치의 소스·문서·테스트·MIT 라이선스를 확인했다.
+인증정보와 개인 실행 기록은 업로드 목록에서 제외했다. 별도의 웹 서비스 배포는 수행하지 않았다.
+작성자는 로컬 환경에서 ChatGPT 연결의 실제 실행도 확인했다. 모델별 반복 성능 비교는 아직 수행하지 않았다.
+
 ## 실제 실행한 범위
 
 - 실제 Wirelog로 `rules/eligibility.dl`을 실행하고, 8턴 기준 플레이의 자원·아이템·승리 상태 확인.
