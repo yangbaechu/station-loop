@@ -7,9 +7,16 @@
 첫 MVP에는 구역 3개, 승무원 3명, 산소·전력·수리 부품과 최대 12턴의 시나리오가 있다.
 브라우저 지도·무전·수동 행동 선택, 실행 기록 저장·내보내기·리플레이를 제공한다.
 
+공개 소스 저장소: [yangbaechu/station-loop](https://github.com/yangbaechu/station-loop) · MIT 라이선스.
+
 ## 바로 실행
 
-Python 3.12 이상과 uv가 필요하다. 프로젝트 루트에서 환경을 준비한다.
+Python 3.12 이상과 uv가 필요하다. 저장소를 복제한 뒤 환경을 준비한다.
+
+```bash
+git clone https://github.com/yangbaechu/station-loop.git
+cd station-loop
+```
 
 ```bash
 uv venv --python 3.12 .venv
